@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload de Imagem</title>
+    <style>
+        .logo-img {
+            width: 150px;  /* Define a largura da imagem */
+            height: auto;  /* Ajusta a altura proporcionalmente */
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    {% if not dados_formatados %}
+        <h1>Faça o upload de uma imagem</h1>
+        <form method="post" enctype="multipart/form-data">
+            <input type="file" name="file">
+            <input type="submit" value="Enviar">
+        </form>
+    {% else %}
+        <h1>Resultado da Consulta</h1>
+
+        <table>
+            <tr>
+                
+                <td><img src="{{ dados_formatados['logo'] }}" alt="Logo da Marca" class="logo-img"></td>
+            </tr>
+            <tr>
+                <th>Marca</th>
+                <td>{{ dados_formatados['marca'] }}</td>
+            </tr>
+            <tr>
+                <th>Modelo</th>
+                <td>{{ dados_formatados['modelo'] }}</td>
+            </tr>
+            <tr>
+                <th>Ano</th>
+                <td>{{ dados_formatados['ano'] }}</td>
+            </tr>
+            <tr>
+                <th>Ano Modelo</th>
+                <td>{{ dados_formatados['anoModelo'] }}</td>
+            </tr>
+            <tr>
+                <th>Cor</th>
+                <td>{{ dados_formatados['cor'] }}</td>
+            </tr>
+            <tr>
+                <th>Combustível</th>
+                <td>{{ dados_formatados['extra']['combustivel'] }}</td>
+            </tr>
+            <tr>
+                <th>Código FIPE</th>
+                <td>{{ dados_formatados['fipe']['dados'][0]['codigo_fipe'] }}</td>
+            </tr>
+            <tr>
+                <th>Mês de Referência</th>
+                <td>{{ dados_formatados['fipe']['dados'][0]['mes_referencia'] }}</td>
+            </tr>
+            <tr>
+                <th>Valor FIPE</th>
+                <td>{{ dados_formatados['fipe']['dados'][0]['texto_valor'] }}</td>
+            </tr>
+            
+        </table>
+        <form method="post">
+            <input type="hidden" name="reset" value="true">
+            <input type="submit" value="Voltar ao Upload">
+        </form>
+    {% endif %}
+</body>
+</html>

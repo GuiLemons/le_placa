@@ -1,0 +1,11 @@
+# Ambiente virtual
+venv/
+*.pyc
+__pycache__/
+*.pyo
+
+# Diretórios de uploads
+uploads/
+
+# Arquivo de configuração do Flask
+instance/
