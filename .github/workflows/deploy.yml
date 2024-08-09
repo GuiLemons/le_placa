@@ -1,0 +1,52 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Cache Docker layers
+      uses: actions/cache@v3
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{secrets.DOCKER_HUB_USERNAME}}
+        password: ${{secrets.DOCKER_HUB_ACCESS_TOKEN}}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: ggranzotto/myapp:latest
+
+    - name: Deploy to VPS via SSH
+      uses: appleboy/ssh-action@v0.1.3
+      with:
+        host: 82.112.245.176  # Substitua pelo IP do seu VPS
+        username: root
+        key: ${{secrets.SSH_PRIVATE_KEY}} 
+        script: |
+          docker pull ggranzotto/myapp:latest
+          docker stop meu_container || true
+          docker rm meu_container || true
+          docker run -d -p 8000:8000 --name meu_container \
+            -e OPENAI_API_KEY=${{secrets.OPENAI_API_KEY}} \
+            ggranzotto/myapp:latest
