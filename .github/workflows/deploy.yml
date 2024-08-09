@@ -27,8 +27,8 @@ jobs:
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
-        username: ${{secrets.DOCKER_HUB_USERNAME}}
-        password: ${{secrets.DOCKER_HUB_ACCESS_TOKEN}}
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
@@ -42,11 +42,11 @@ jobs:
       with:
         host: 82.112.245.176  # Substitua pelo IP do seu VPS
         username: root
-        key: ${{secrets.SSH_PRIVATE_KEY}} 
+        key: ${{ secrets.SSH_PRIVATE_KEY }} 
         script: |
           docker pull ggranzotto/myapp:latest
           docker stop meu_container || true
           docker rm meu_container || true
           docker run -d -p 8000:8000 --name meu_container \
-            -e OPENAI_API_KEY=${{secrets.OPENAI_API_KEY}} \
+            -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
             ggranzotto/myapp:latest
