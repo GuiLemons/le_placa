@@ -47,16 +47,13 @@ jobs:
   
 
     - name: Deploy to VPS via SSH
-      uses: appleboy/ssh-action@v0.1.3
-      with:
-        host: "82.112.245.176"  
-        username: "root"
-        key: ${{ secrets.SSH_PRIVATE_KEY }} 
-        script: |
+      run: |
+        ssh -i ~/.ssh/github-actions -o StrictHostKeyChecking=no root@82.112.245.176 << 'EOF'
           docker pull ggranzotto/app_tests:latest
           docker stop meu_container || true
           docker rm meu_container || true
           docker run -d -p 8000:8000 --name meu_container \
             -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
             ggranzotto/app_tests:latest
+        EOF
           
