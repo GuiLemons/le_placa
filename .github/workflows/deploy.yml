@@ -27,7 +27,7 @@ jobs:
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
-        username: ggranzotto #
+        username: ggranzotto 
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
     - name: Build and push Docker image
@@ -50,3 +50,4 @@ jobs:
           docker run -d -p 8000:8000 --name meu_container \
             -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
             ggranzotto/app_tests:latest
+          
