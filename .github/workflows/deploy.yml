@@ -36,6 +36,15 @@ jobs:
         context: .
         push: true
         tags: ggranzotto/app_tests:latest
+    
+    - name: Set up SSH key
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+  
+    - name: Test SSH connection
+      run: ssh -i ~/.ssh/github-actions -o StrictHostKeyChecking=no root@82.112.245.176 "echo 'SSH connection successful!'"
+  
 
     - name: Deploy to VPS via SSH
       uses: appleboy/ssh-action@v0.1.3
