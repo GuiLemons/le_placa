@@ -11,9 +11,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copie todo o código da aplicação para o diretório de trabalho
 COPY . .
 
+# Crie o diretório de uploads e ajuste as permissões
+RUN mkdir -p /app/uploads && chmod -R 755 /app/uploads
 
 # Exponha a porta que o Gunicorn usará
 EXPOSE 8000
 
 # Comando para iniciar a aplicação usando Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "wsgi:app"]
