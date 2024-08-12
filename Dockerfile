@@ -18,4 +18,4 @@ RUN mkdir -p /app/uploads && chmod -R 755 /app/uploads
 EXPOSE 8000
 
 # Comando para iniciar a aplicação usando Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "wsgi:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app:app"]
