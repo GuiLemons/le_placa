@@ -11,6 +11,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copie todo o código da aplicação para o diretório de trabalho
 COPY . .
 
+
 # Exponha a porta que o Gunicorn usará
 EXPOSE 8000
 
