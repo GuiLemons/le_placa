@@ -55,8 +55,10 @@ def analisa_imagem(url):
     "max_tokens": 300
     }
    
+    print (payload)
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
     resp = response.json()
+    print (resp)
 
     resposta = resp['choices'][0]['message']['content']
     url = f"https://wdapi2.com.br/consulta/{resposta}/1c192c007ea240de7a6d5d57bea000c7"
@@ -99,4 +101,5 @@ def upload_file():
         
     return render_template('upload.html')
 
-
+if __name__ == '__main__':
+    app.run(debug=True)
