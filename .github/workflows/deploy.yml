@@ -48,9 +48,12 @@ jobs:
         username: "root"
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          docker pull ggranzotto/app_tests:latest
-          docker stop meu_container || true
-          docker rm meu_container || true
-          docker run -d -p 8000:8000 --name meu_container \
-            -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
-            ggranzotto/app_tests:latest
+           docker pull ggranzotto/app_tests:latest
+           docker stop meu_container || true
+           docker rm meu_container || true
+           docker run -d -p 8000:8000 --name meu_container \
+              -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
+              --label "traefik.enable=true" \
+              --label "traefik.http.routers.app_tests.rule=Host(`placas.guilemons.com.br`)" \
+              --label "traefik.http.services.app_tests.loadbalancer.server.port=8000" \
+              ggranzotto/app_tests:latest
