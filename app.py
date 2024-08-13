@@ -26,30 +26,35 @@ def formatar_dados(dados):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def analisa_imagem(filepath):
+def analisa_imagem(url):
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {api_key}"
     }
 
-    with open(filepath, "rb") as image_file:
-        img_data = image_file.read()
-
-    files = {
-        'file': (os.path.basename(filepath), img_data)
-    }
-
+   
     payload = {
-        "model": "gpt-4o-mini",
-        "messages": [
+    "model": "gpt-4o-mini",
+    "messages": [
+        {
+        "role": "user",
+        "content": [
             {
-                "role": "user",
-                "content": "me diga o que está escrito na placa desse carro. O padrão sempre será 3 letras seguido de um número. Os demais caracteres podem variar, mas os 3 primeiros obrigatoriamente devem ser letras e o quarto caractere deve ser um número. Leve isso em conta em sua análise. Me responda apenas com a placa no seguinte formato: NNN0XXX - sendo a letra 'N' correspondente a alguma letra, o '0' correspondente a algum número e a letra 'X' correspondente a qualquer outro caractere que você identificar."
+            "type": "text",
+            "text": "me diga o que está escrito na placa desse carro. O padrão sempre será 3 letras seguido de um número. Os demais caracteres podem variar, mas os 3 primeiros obrigatoriamente devem ser letras e o quarto caractere deve ser um número. Leve isso em conta em sua análise. Me responda apenas com a placa no seguinte formato: NNN0XXX - sendo a letra 'N' correspondente a alguma letra, o '0' correspondente a algum número e a letra 'X' correspondente a qualquer outro caractere que você identificar."
+            },
+            {
+            "type": "image_url",
+            "image_url": {
+                "url": url
             }
-        ],
-        "max_tokens": 300
+            }
+        ]
+        }
+    ],
+    "max_tokens": 300
     }
-
+   
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
     resp = response.json()
 
@@ -77,19 +82,18 @@ def upload_file():
             return "Nenhum arquivo selecionado"
 
         if file and allowed_file(file.filename):
-            filename = file.filename
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file_ext = file.filename.rsplit('.', 1)[1].lower()
+            new_filename = f"foto.{file_ext}"
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
             file.save(filepath)
 
-            # Exibe a URL da imagem
-            image_url = url_for('static', filename=f'uploads/{filename}', _external=True)
-            
+            image_url = url_for('static', filename=f'uploads/{new_filename}', _external=True)
+            print (image_url)
             # Envia a imagem para análise
-            dados = analisa_imagem(filepath)
+            dados = analisa_imagem(image_url)
             
             return render_template('upload.html', dados_formatados=dados, image_url=image_url)
         
     return render_template('upload.html')
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
