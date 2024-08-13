@@ -90,7 +90,7 @@ def upload_file():
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
             file.save(filepath)
 
-            image_url = "http://82.112.245.176:8000/uploads/foto.png"
+            image_url = "http://82.112.245.176:8000/uploads/foto.jpeg"
             print (image_url)
             # Envia a imagem para análise
             dados = analisa_imagem(image_url)
