@@ -3,6 +3,8 @@ import os
 import openai
 import requests
 import json
+import base64
+
 
 app = Flask(__name__)
 
@@ -26,7 +28,12 @@ def formatar_dados(dados):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def analisa_imagem(url):
+def analisa_imagem(filepath):
+ 
+    with open(filepath, "rb") as image_file:
+        img_data = image_file.read()
+        img_base64 = base64.b64encode(img_data).decode('utf-8')
+
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {api_key}"
@@ -46,7 +53,7 @@ def analisa_imagem(url):
             {
             "type": "image_url",
             "image_url": {
-                "url": url
+                "url": f"data:image/jpeg;base64,{img_base64}"
             }
             }
         ]
@@ -55,17 +62,18 @@ def analisa_imagem(url):
     "max_tokens": 300
     }
    
-    print (payload)
+    
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
     resp = response.json()
-    print (resp)
+    
 
     resposta = resp['choices'][0]['message']['content']
     url = f"https://wdapi2.com.br/consulta/{resposta}/1c192c007ea240de7a6d5d57bea000c7"
     
     dados = requests.get(url)
     carro = dados.json()
-    return carro
+    return carro 
+    
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
@@ -92,12 +100,10 @@ def upload_file():
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
             file.save(filepath)
 
-            image_url = "http://82.112.245.176:8000/uploads/foto.jpeg"
-            print (image_url)
             # Envia a imagem para análise
-            dados = analisa_imagem(image_url)
+            dados = analisa_imagem(filepath)
             
-            return render_template('upload.html', dados_formatados=dados, image_url=image_url)
+            return render_template('upload.html', dados_formatados=dados)
         
     return render_template('upload.html')
 
