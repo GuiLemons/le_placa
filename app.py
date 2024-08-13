@@ -90,7 +90,7 @@ def upload_file():
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
             file.save(filepath)
 
-            image_url = url_for('static', filename=f'uploads/{new_filename}', _external=True)
+            image_url = url_for(filename=f'uploads/{new_filename}', _external=True)
             print (image_url)
             # Envia a imagem para análise
             dados = analisa_imagem(image_url)
