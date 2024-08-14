@@ -18,7 +18,7 @@
     {% if not dados_formatados %}
         <h1>Faça o upload de uma imagem</h1>
         <form method="post" enctype="multipart/form-data">
-            <input type="file" name="file">
+            <input type="file" name="file" accept="image/*" capture="camera">
             <input type="submit" value="Enviar">
         </form>
     {% else %}
